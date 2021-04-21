@@ -29,6 +29,15 @@ steps:
     backendAzureRmKey: 'foo'
     allowTelemetryCollection: true
 
+
+- task: TerraformCLI@0
+  inputs:
+    command: 'plan'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/infra'
+    environmentServiceName: 'azure_visual_studio_subscription'
+    allowTelemetryCollection: true
+    publishPlanResults: 'plan'
+
 - task: TerraformCLI@0
   inputs:
     command: 'apply'

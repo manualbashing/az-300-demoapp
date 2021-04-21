@@ -33,15 +33,6 @@ steps:
         --account-name saterraform413 \
         --auth login
 
-      sasToken=az storage container generate-sas \
-        --account-name saterraform413 \
-        --name az300demo \
-        --permissions acdlrw \
-        --expiry `date -u -d "10 minutes" '+%Y-%m-%dT%H:%MZ'` \
-        --auth-mode login \
-        --as-user \
-        -o tsv
-
       export ARM_CLIENT_ID=$servicePrincipalId
       export ARM_CLIENT_SECRET=$servicePrincipalKey
       export ARM_SUBSCRIPTION_ID=$(az account show --query id | xargs)
@@ -60,5 +51,5 @@ steps:
     azureSubscription: 'azure_visual_studio_subscription'
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
-    inlineScript: 'terraform apply -auto-approve test.tfstate'
+    inlineScript: 'terraform apply -auto-approve'
     workingDirectory: '$(System.DefaultWorkingDirectory)/infra'

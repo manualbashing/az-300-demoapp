@@ -5,15 +5,20 @@ pool:
   vmImage: ubuntu-latest
 
 parameters:
-  - name: terraformStorageAccount
-    displayName: "Storage account name for terraform backend"
-    type: string
-    default: 'saterraform413'
-
   - name: terraformResourceGroup
     displayName: "Resource group name for terraform backend"
     type: string
     default: 'rg-terraform-backend'
+
+  - name: terraformLocation
+    displayName: "Location for terraform backend"
+    type: string
+    default: 'westeurope'
+
+  - name: terraformStorageAccount
+    displayName: "Storage account name for terraform backend"
+    type: string
+    default: 'saterraform413'
 
   - name: terraformStorageContainer
     displayName: "Storage container name for terraform backend"
@@ -45,6 +50,10 @@ steps:
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
     inlineScript: |
+
+      az group create \
+        --name ${{ parameters.terraformResourceGroup }} \
+        --location ${{ parameters.terraformLocation }}
 
       az storage account create \
         --name ${{ parameters.terraformStorageAccount }}\

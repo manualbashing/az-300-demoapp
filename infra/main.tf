@@ -6,7 +6,6 @@ provider "azurerm" {
   features {}
 }
 provider "random" {
-  features {}
 }
 
 resource "random_string" "suffix" {

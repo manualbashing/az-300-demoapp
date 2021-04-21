@@ -42,6 +42,9 @@ variables:
   - name: 'terraformStateFile'
     value: '${{ parameters.environment }}.tfstate'
 
+  - name: 'terraformVariablesFile'
+    value: '${{ parameters.environment }}.tfvars'
+
 steps:
 - task: AzureCLI@2
   displayName: 'Ensure infrastructure for terraform backend'
@@ -104,6 +107,6 @@ steps:
       export ARM_SUBSCRIPTION_ID=$(az account show --query id -o tsv)
       export ARM_TENANT_ID=$(az account show --query tenantId -o tsv)
 
-      terraform apply -auto-approve
+      terraform apply -auto-approve -vars $(terraformVariablesFile)
 
     workingDirectory: ${{ variables.terraformDirectory }}

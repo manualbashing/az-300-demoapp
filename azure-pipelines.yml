@@ -18,6 +18,7 @@ steps:
   inputs:
     command: 'init'
     workingDirectory: '$(System.DefaultWorkingDirectory)/infra'
+    commandOptions: '--no-color'
     backendType: 'azurerm'
     backendServiceArm: 'azure_visual_studio_subscription'
     ensureBackend: true
@@ -26,7 +27,7 @@ steps:
     backendAzureRmStorageAccountName: 'saterraform413'
     backendAzureRmStorageAccountSku: 'Standard_LRS'
     backendAzureRmContainerName: 'az300demo'
-    backendAzureRmKey: 'state.tfstate'
+    backendAzureRmKey: 'test.tfstate'
     allowTelemetryCollection: true
 
 

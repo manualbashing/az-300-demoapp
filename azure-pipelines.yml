@@ -15,9 +15,11 @@ steps:
   inputs:
     azureSubscription: 'azure_visual_studio_subscription'
     scriptType: 'bash'
+    addSpnToEnvironment: true
     scriptLocation: 'inlineScript'
     inlineScript: |
       echo "Ensure infrastructure for terraform backend"
+      
       az storage account create \
         --name saterraform413\
         --resource-group rg-terrafom-pipelines\
@@ -25,10 +27,12 @@ steps:
         --sku Standard_LRS \
         --https-only true \
         --allow-blob-public-access false
+
       az storage container create \
         --name az300demo \
         --account-name saterraform413 \
         --auth login
+
       sasToken=az storage container generate-sas \
         --account-name saterraform413 \
         --name az300demo \
@@ -37,6 +41,12 @@ steps:
         --auth-mode login \
         --as-user \
         -o tsv
+
+      export ARM_CLIENT_ID=$servicePrincipalId
+      export ARM_CLIENT_SECRET=$servicePrincipalKey
+      export ARM_SUBSCRIPTION_ID=$(az account show --query id | xargs)
+      export ARM_TENANT_ID=$(az account show --query tenantId | xargs)
+
       terraform init \
         -backend-config="storage_account_name=saterraform413" \
         -backend-config="container_name=az300demo" \

@@ -36,6 +36,7 @@ steps:
     command: 'plan'
     workingDirectory: '$(System.DefaultWorkingDirectory)/infra'
     environmentServiceName: 'azure_visual_studio_subscription'
+    commandOptions: '-no-color'
     allowTelemetryCollection: true
     publishPlanResults: 'plan'
 
@@ -44,4 +45,5 @@ steps:
     command: 'apply'
     workingDirectory: '$(System.DefaultWorkingDirectory)/infra'
     environmentServiceName: 'azure_visual_studio_subscription'
+    commandOptions: '-no-color'
     allowTelemetryCollection: true

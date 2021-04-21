@@ -4,7 +4,7 @@
 # https://aka.ms/yaml
 
 trigger:
-- master
+- none
 
 pool:
   vmImage: ubuntu-latest
@@ -27,7 +27,7 @@ steps:
     backendAzureRmStorageAccountName: 'saterraform413'
     backendAzureRmStorageAccountSku: 'Standard_LRS'
     backendAzureRmContainerName: 'az300demo'
-    backendAzureRmKey: 'test.tfstate'
+    backendAzureRmKey: '"test.tfstate"'
     allowTelemetryCollection: true
 
 

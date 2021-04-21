@@ -9,40 +9,69 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
+parameters:
+  - name: terraformStorageAccount
+    displayName: "Storage account name for terraform backend"
+    type: string
+    default: 'saterraform413'
+
+  - name: terraformResourceGroup
+    displayName: "Resource group name for terraform backend"
+    type: string
+    default: 'rg-terrafom-pipelines'
+
+  - name: terraformStorageContainer
+    displayName: "Storage container name for terraform backend"
+    type: string
+    default: 'az300wdemo'
+
+  - name: terraformStateFile
+    displayName: "State file name for terraform backend"
+    type: string
+    default: 'test.tfstate'
+
 steps:
 - task: AzureCLI@2
-  displayName: 'terraform init with azurerm backend'
+  displayName: 'Ensure infrastructure for terraform backend'
   inputs:
     azureSubscription: 'azure_visual_studio_subscription'
     scriptType: 'bash'
-    addSpnToEnvironment: true
     scriptLocation: 'inlineScript'
     inlineScript: |
-      echo "Ensure infrastructure for terraform backend"
 
       az storage account create \
-        --name saterraform413\
-        --resource-group rg-terrafom-pipelines\
+        --name ${{ parameters.terraformStorageAccount }}\
+        --resource-group ${{ parameters.terraformResourceGroup }}\
         --kind StorageV2 \
         --sku Standard_LRS \
         --https-only true \
         --allow-blob-public-access false
 
       az storage container create \
-        --name az300demo \
-        --account-name saterraform413 \
+        --name ${{ parameters.terraformStorageContainerName }} \
+        --account-name ${{ parameters.terraformStorageAccount }} \
         --auth login
+
+- task: AzureCLI@2
+  displayName: "terraform init with azurerm backend"
+  inputs:
+    azureSubscription: 'azure_visual_studio_subscription'
+    scriptType: 'bash'
+    addSpnToEnvironment: true
+    scriptLocation: 'inlineScript'
+    inlineScript: |
 
       export ARM_CLIENT_ID=$servicePrincipalId
       export ARM_CLIENT_SECRET=$servicePrincipalKey
-      export ARM_SUBSCRIPTION_ID=$(az account show --query id | xargs)
-      export ARM_TENANT_ID=$(az account show --query tenantId | xargs)
+      export ARM_SUBSCRIPTION_ID=$(az account show --query id -o tsv)
+      export ARM_TENANT_ID=$(az account show --query tenantId -o tsv)
 
       terraform init \
-        -backend-config="storage_account_name=saterraform413" \
-        -backend-config="container_name=az300demo" \
-        -backend-config="key=test.tfstate" \
-        -backend-config="resource_group_name=rg-terrafom-pipelines"
+        -backend-config="storage_account_name=${{ parameters.terraformStorageAccount }}" \
+        -backend-config="container_name=${{ parameters.terraformStorageContainerName }}" \
+        -backend-config="key=${{ parameters.terraformStateFile }}" \
+        -backend-config="resource_group_name=${{ parameters.terraformResourceGroup }}"
+
     workingDirectory: '$(System.DefaultWorkingDirectory)/infra'
 
 - task: AzureCLI@2
@@ -53,10 +82,12 @@ steps:
     addSpnToEnvironment: true
     scriptLocation: 'inlineScript'
     inlineScript: |
+
       export ARM_CLIENT_ID=$servicePrincipalId
       export ARM_CLIENT_SECRET=$servicePrincipalKey
-      export ARM_SUBSCRIPTION_ID=$(az account show --query id | xargs)
-      export ARM_TENANT_ID=$(az account show --query tenantId | xargs)
-      
+      export ARM_SUBSCRIPTION_ID=$(az account show --query id -o tsv)
+      export ARM_TENANT_ID=$(az account show --query tenantId -o tsv)
+
       terraform apply -auto-approve
+
     workingDirectory: '$(System.DefaultWorkingDirectory)/infra'

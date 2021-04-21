@@ -50,6 +50,13 @@ steps:
   inputs:
     azureSubscription: 'azure_visual_studio_subscription'
     scriptType: 'bash'
+    addSpnToEnvironment: true
     scriptLocation: 'inlineScript'
-    inlineScript: 'terraform apply -auto-approve'
+    inlineScript: |
+      export ARM_CLIENT_ID=$servicePrincipalId
+      export ARM_CLIENT_SECRET=$servicePrincipalKey
+      export ARM_SUBSCRIPTION_ID=$(az account show --query id | xargs)
+      export ARM_TENANT_ID=$(az account show --query tenantId | xargs)
+      
+      terraform apply -auto-approve
     workingDirectory: '$(System.DefaultWorkingDirectory)/infra'

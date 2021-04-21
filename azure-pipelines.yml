@@ -38,7 +38,7 @@ steps:
     environmentServiceName: 'azure_visual_studio_subscription'
     commandOptions: '-no-color'
     allowTelemetryCollection: true
-    publishPlanResults: 'plan'
+    publishPlanResults: 'demoapp300_plan'
 
 - task: TerraformCLI@0
   inputs:

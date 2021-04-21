@@ -30,6 +30,10 @@ parameters:
     type: string
     default: 'test.tfstate'
 
+variables: 
+  - name: 'terraformDirectory'
+    value: '$(System.DefaultWorkingDirectory)/infra'
+
 steps:
 - task: AzureCLI@2
   displayName: 'Ensure infrastructure for terraform backend'
@@ -72,7 +76,7 @@ steps:
         -backend-config="key=${{ parameters.terraformStateFile }}" \
         -backend-config="resource_group_name=${{ parameters.terraformResourceGroup }}"
 
-    workingDirectory: '$(System.DefaultWorkingDirectory)/infra'
+    workingDirectory: ${{ variables.terraformDirectory }}
 
 - task: AzureCLI@2
   displayName: "terraform apply"
@@ -90,4 +94,4 @@ steps:
 
       terraform apply -auto-approve
 
-    workingDirectory: '$(System.DefaultWorkingDirectory)/infra'
+    workingDirectory: ${{ variables.terraformDirectory }}

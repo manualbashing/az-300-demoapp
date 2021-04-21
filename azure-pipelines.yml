@@ -10,40 +10,44 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
-- task: TerraformInstaller@0
+- task: AzureCLI@2
+  displayName: 'terraform init with azurerm backend'
   inputs:
-    terraformVersion: 'latest'
+    azureSubscription: 'azure_visual_studio_subscription'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      echo "Ensure infrastructure for terraform backend"
+      az storage account create \
+        --name saterraform413\
+        --resource-group rg-terrafom-pipelines\
+        --kind StorageV2 \
+        --sku Standard_LRS \
+        --https-only true \
+        --allow-blob-public-access false
+      az storage container create \
+        --name az300demo \
+        --account-name saterraform413 \
+        --auth login
+      sasToken=az storage container generate-sas \
+        --account-name saterraform413 \
+        --name az300demo \
+        --permissions acdlrw \
+        --expiry `date -u -d "10 minutes" '+%Y-%m-%dT%H:%MZ'` \
+        --auth-mode login \
+        --as-user \
+        -o tsv
+      terraform init \
+        -backend-config="storage_account_name=saterraform413" \
+        -backend-config="container_name=az300demo" \
+        -backend-config="key=test.tfstate" \
+        -backend-config="sas_token=$sasToken"
 
-- task: TerraformCLI@0
+- task: AzureCLI@2
+  displayName: "terraform apply"
   inputs:
-    command: 'init'
-    workingDirectory: '$(System.DefaultWorkingDirectory)/infra'
-    commandOptions: '-no-color'
-    backendType: 'azurerm'
-    backendServiceArm: 'azure_visual_studio_subscription'
-    ensureBackend: true
-    backendAzureRmResourceGroupName: 'rg-terrafom-pipelines'
-    backendAzureRmResourceGroupLocation: 'westeurope'
-    backendAzureRmStorageAccountName: 'saterraform413'
-    backendAzureRmStorageAccountSku: 'Standard_LRS'
-    backendAzureRmContainerName: 'az300demo'
-    backendAzureRmKey: 'test.tfstate'
-    allowTelemetryCollection: true
-
-
-- task: TerraformCLI@0
-  inputs:
-    command: 'plan'
-    workingDirectory: '$(System.DefaultWorkingDirectory)/infra'
-    environmentServiceName: 'azure_visual_studio_subscription'
-    commandOptions: '-no-color'
-    allowTelemetryCollection: true
-    publishPlanResults: 'demoapp300_plan'
-
-- task: TerraformCLI@0
-  inputs:
-    command: 'apply'
-    workingDirectory: '$(System.DefaultWorkingDirectory)/infra'
-    environmentServiceName: 'azure_visual_studio_subscription'
-    commandOptions: '-no-color'
-    allowTelemetryCollection: true
+    azureSubscription: 'azure_visual_studio_subscription'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      terraform apply --auto-approve

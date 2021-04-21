@@ -23,7 +23,7 @@ parameters:
   - name: terraformStorageContainer
     displayName: "Storage container name for terraform backend"
     type: string
-    default: 'az300wdemo'
+    default: 'az300demo'
 
   - name: terraformStateFile
     displayName: "State file name for terraform backend"

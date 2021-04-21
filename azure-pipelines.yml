@@ -20,19 +20,22 @@ parameters:
     type: string
     default: 'myapplication'
 
-  - name: terraformStateFile
+  - name: environment
     displayName: "State file name for terraform backend"
     type: string
-    default: 'testing.tfstate'
+    default: 'testing'
     values: [ 
-      'testing.tfstate',
-      'staging.tfstate',
-      'production.tfstate'
+      'testing',
+      'staging',
+      'production'
      ]
 
 variables: 
   - name: 'terraformDirectory'
     value: '$(System.DefaultWorkingDirectory)/infra'
+  
+  - name: 'terraformStateFile'
+    value: '${{ parameters.environment }}.tfstate'
 
 steps:
 - task: AzureCLI@2
@@ -73,7 +76,7 @@ steps:
       terraform init \
         -backend-config="storage_account_name=${{ parameters.terraformStorageAccount }}" \
         -backend-config="container_name=${{ parameters.terraformStorageContainer }}" \
-        -backend-config="key=${{ parameters.terraformStateFile }}" \
+        -backend-config="key=${{ variables.terraformStateFile }}" \
         -backend-config="resource_group_name=${{ parameters.terraformResourceGroup }}"
 
     workingDirectory: ${{ variables.terraformDirectory }}

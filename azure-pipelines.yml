@@ -43,5 +43,4 @@ steps:
     command: 'apply'
     workingDirectory: '$(System.DefaultWorkingDirectory)/infra'
     environmentServiceName: 'azure_visual_studio_subscription'
-    commandOptions: '--auto-approve'
     allowTelemetryCollection: true

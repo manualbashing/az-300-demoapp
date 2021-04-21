@@ -48,7 +48,7 @@ steps:
         --allow-blob-public-access false
 
       az storage container create \
-        --name ${{ parameters.terraformStorageContainerName }} \
+        --name ${{ parameters.terraformStorageContainer }} \
         --account-name ${{ parameters.terraformStorageAccount }} \
         --auth login
 
@@ -68,7 +68,7 @@ steps:
 
       terraform init \
         -backend-config="storage_account_name=${{ parameters.terraformStorageAccount }}" \
-        -backend-config="container_name=${{ parameters.terraformStorageContainerName }}" \
+        -backend-config="container_name=${{ parameters.terraformStorageContainer }}" \
         -backend-config="key=${{ parameters.terraformStateFile }}" \
         -backend-config="resource_group_name=${{ parameters.terraformResourceGroup }}"
 

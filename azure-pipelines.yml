@@ -50,4 +50,4 @@ steps:
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
     inlineScript: |
-      terraform apply --auto-approve
+      terraform apply -auto-approve test.tfstate

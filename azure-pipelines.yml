@@ -42,6 +42,7 @@ steps:
         -backend-config="container_name=az300demo" \
         -backend-config="key=test.tfstate" \
         -backend-config="sas_token=$sasToken"
+    workingDirectory: '$(System.DefaultWorkingDirectory)/infra'
 
 - task: AzureCLI@2
   displayName: "terraform apply"
@@ -49,5 +50,5 @@ steps:
     azureSubscription: 'azure_visual_studio_subscription'
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
-    inlineScript: |
-      terraform apply -auto-approve test.tfstate
+    inlineScript: 'terraform apply -auto-approve test.tfstate'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/infra'

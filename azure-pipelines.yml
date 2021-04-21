@@ -1,8 +1,3 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
 - none
 
@@ -18,17 +13,22 @@ parameters:
   - name: terraformResourceGroup
     displayName: "Resource group name for terraform backend"
     type: string
-    default: 'rg-terrafom-pipelines'
+    default: 'rg-terraform-backend'
 
   - name: terraformStorageContainer
     displayName: "Storage container name for terraform backend"
     type: string
-    default: 'az300demo'
+    default: 'myapplication'
 
   - name: terraformStateFile
     displayName: "State file name for terraform backend"
     type: string
-    default: 'test.tfstate'
+    default: 'testing.tfstate'
+    values: [ 
+      'testing.tfstate',
+      'staging.tfstate',
+      'production.tfstate'
+     ]
 
 variables: 
   - name: 'terraformDirectory'

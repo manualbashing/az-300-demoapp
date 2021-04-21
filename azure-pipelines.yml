@@ -19,7 +19,7 @@ steps:
     scriptLocation: 'inlineScript'
     inlineScript: |
       echo "Ensure infrastructure for terraform backend"
-      
+
       az storage account create \
         --name saterraform413\
         --resource-group rg-terrafom-pipelines\
@@ -51,7 +51,7 @@ steps:
         -backend-config="storage_account_name=saterraform413" \
         -backend-config="container_name=az300demo" \
         -backend-config="key=test.tfstate" \
-        -backend-config="sas_token=$sasToken"
+        -backend-config="resource_group_name=rg-terrafom-pipelines"
     workingDirectory: '$(System.DefaultWorkingDirectory)/infra'
 
 - task: AzureCLI@2
